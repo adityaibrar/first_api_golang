@@ -23,10 +23,18 @@ func GenerateJWT(user models.User) (string, error) {
 }
 
 func AuthMiddleware(c *fiber.Ctx) error {
-	tokenString := c.Get("Authorization")
-	if tokenString == "" {
+	authHeader := c.Get("Authorization")
+	if authHeader == "" {
 		return ErrorResponse(c, fiber.StatusBadRequest, "No Token provided")
 	}
+
+	var tokenString string
+	fmt.Sscanf(authHeader, "Bearer %s", &tokenString)
+
+	if tokenString == "" {
+		return ErrorResponse(c, fiber.StatusBadRequest, "Token format invalid")
+	}
+
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
@@ -35,7 +43,7 @@ func AuthMiddleware(c *fiber.Ctx) error {
 	})
 
 	if err != nil || !token.Valid {
-		return ErrorResponse(c, fiber.StatusBadRequest, "No Token provided")
+		return ErrorResponse(c, fiber.StatusBadRequest, "Token is invalid")
 	}
 	return c.Next()
 }
