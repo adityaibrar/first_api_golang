@@ -1,20 +1,21 @@
 package main
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"first_api_golang/config"
+	"first_api_golang/routes"
+	"log"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+)
 
 func main() {
 	app := fiber.New()
+	app.Use(cors.New())
 
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("Hello, World!!!")
-	})
+	db := config.InitDatabase()
 
-	app.Get("/json", func(c *fiber.Ctx) error {
-		return c.JSON(fiber.Map{
-			"Username": "Aditya Ibrar Abdillah ",
-			"Role":     "Mobile Developer",
-		})
-	})
+	routes.SetupRoutes(app, db)
 
-	app.Listen(":3000")
+	log.Fatal(app.Listen(":3000"))
 }
