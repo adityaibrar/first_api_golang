@@ -14,6 +14,6 @@ func InitDatabase() *gorm.DB {
 	if err != nil {
 		log.Fatal("Failed to Connected server", err)
 	}
-	db.AutoMigrate(&models.User{})
+	db.AutoMigrate(&models.User{}, &models.Product{})
 	return db
 }
