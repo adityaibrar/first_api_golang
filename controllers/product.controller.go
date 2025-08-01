@@ -61,11 +61,12 @@ func (productController *ProductController) GetListProduct(c *fiber.Ctx) error {
 	}
 	return utils.SuccesResponse(c, fiber.StatusOK, "Successfully get product", products)
 }
+
 func (productController *ProductController) DetailProduct(c *fiber.Ctx) error {
 	id := c.Params("id")
 	var products models.Product
 
-	if err := productController.DB.Find(&products,id).Error; err != nil {
+	if err := productController.DB.Find(&products, id).Error; err != nil {
 		return utils.ErrorResponse(c, fiber.StatusBadRequest, "Products is empty")
 	}
 	return utils.SuccesResponse(c, fiber.StatusOK, "Successfully get product", products)
